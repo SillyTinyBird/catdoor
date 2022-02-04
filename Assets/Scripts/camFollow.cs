@@ -44,12 +44,6 @@ public class camFollow : MonoBehaviour
     void inputToPosition()
     {
         Quaternion qu = Quaternion.LookRotation(transform.position - anchor.position, anchor.up);
-        //Debug.DrawLine(anchor.position, anchor.position + qu * Vector3.forward, Color.blue, 0.0f, false);
-        /*transform.position = Vector3.SmoothDamp(transform.position, anchor.position
-            + Vector3.Normalize(Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
-            Vector3.Cross(transform.position - anchor.position, anchor.up))
-            * Quaternion.AngleAxis(Input.GetAxis("Mouse X") * mouseSensitivity, anchor.up)
-            * qu * Vector3.forward) * magnitude, ref velocity,smoothTime);*/
         Vector3 nextPos = anchor.position
         + Vector3.Normalize(Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
         Vector3.Cross(transform.position - anchor.position, anchor.up))
@@ -61,11 +55,11 @@ public class camFollow : MonoBehaviour
             transform.position = nextPos;
             transform.LookAt(anchor, anchor.up);
         }
-        /*else
+        else
         {
-            transform.position = Vector3.ProjectOnPlane(nextPos, dir);
+            transform.position = anchor.position + qu * Vector3.forward * magnitude;
             transform.LookAt(anchor, anchor.up);
-        }*/
+        }
 
         
         //Debug.Log(nextPosCollider(nextPos));

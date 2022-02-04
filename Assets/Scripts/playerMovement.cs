@@ -18,7 +18,6 @@ public class playerMovement : MonoBehaviour
     //private camFollow cameraController;
     void Start()
     {
-        //cameraController = cam.GetComponent<camFollow>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -40,12 +39,8 @@ public class playerMovement : MonoBehaviour
 
         if(Input.GetAxis("Vertical") > 0)
         {
-            //rb.MovePosition(Vector3.Lerp(transform.position, transform.position + viewDirection.normalized * movementSpeed * Time.fixedDeltaTime, Input.GetAxis("Vertical")));
             MoveSum += Vector3.Lerp(transform.position, transform.position + viewDirection.normalized * movementSpeed * Time.fixedDeltaTime, Input.GetAxis("Vertical")) - transform.position;//input on t alows smooth speed up and fade out
-            //rb.MoveRotation(Quaternion.LookRotation(Vector3.SmoothDamp(transform.forward, viewDirection.normalized, ref velocity, smoothTime), floor));//quinternion not smoothed
-            //rb.AddForce(viewDirection.normalized * movementSpeed);
-            /*rb.MoveRotation(Quaternion.Slerp(transform.rotation,
-                Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward, floor), floor), smoothTime));//sum quaternions*/
+
             rb.MoveRotation(Quaternion.Slerp(transform.rotation,
                 Quaternion.LookRotation(viewDirection.normalized, floor),
                 smoothTime));
@@ -57,8 +52,6 @@ public class playerMovement : MonoBehaviour
                 Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward,floor), floor), smoothTime));
 
             //AVOID SHARP CORNERS!!!
-
-            // rb.MovePosition(HitCentre.point + floor * floorDist);
         }
         //Debug.Log(floor);
         float dist =  Vector3.Distance(HitCentre.point, transform.position);
@@ -69,13 +62,8 @@ public class playerMovement : MonoBehaviour
         }
         else
         {
-            //rb.MovePosition(Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime));
             MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime) - transform.position;
         }
-        //rb.AddForce(Vector3.Scale(floor, new Vector3(-1, -1, -1)));
-        //DrawDebug(viewDirection, direction);
-        //rotateTowardsMoveDirection(direction);
-        //Debug.Log(MoveSum - transform.position);
         Debug.DrawLine(transform.position, MoveSum, Color.magenta, 0, false);
         rb.MovePosition(MoveSum);
 
@@ -123,7 +111,6 @@ public class playerMovement : MonoBehaviour
     Vector3 FloorAngleCheck()
     {
         Vector3 HitDir = transform.up;
-        //foreach (Transform item in GroundChecks)
         for (int i = 0; i < GroundParent.childCount; i++)
         {
             Transform item = GroundParent.GetChild(i);
