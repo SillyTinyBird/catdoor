@@ -120,7 +120,7 @@ public class playerMovement : MonoBehaviour
             {
                 HitDir += Hit.normal;
                 Debug.DrawLine(item.position, Hit.point);
-                DrawSurface(Hit);
+                //DrawSurface(Hit);
             }
         }
         Debug.DrawLine(transform.position, transform.position + (HitDir.normalized * 5f), Color.cyan);

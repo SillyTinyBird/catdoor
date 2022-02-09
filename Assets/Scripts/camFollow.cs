@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class camFollow : MonoBehaviour
 {
     [Range(0.05f, 10.0f)]
@@ -7,33 +6,14 @@ public class camFollow : MonoBehaviour
     public Transform anchor;
     [Range(0.05f, 1.0f)]
     public float smoothTime = 0.3F;
-    private Vector3 velocity = Vector3.zero;
     public float magnitude;
-    public float rayDistance = 1f;
     public LayerMask GroundLayers;
-    private Vector3[] positions = {
-        new Vector3(0f, 0f, 1f),
-        new Vector3(0f, 0f, -1f),
-        new Vector3(0f, 1f, 0f),
-        new Vector3(0f, -1f, 0f),
-        new Vector3(1f, 0f, 0f),
-        new Vector3(-1f, 0f, 0f),
-
-        new Vector3(1f, 1f, 1f),
-        new Vector3(1f, -1f, 1f),
-        new Vector3(-1f, 1f, 1f),
-        new Vector3(-1f, -1f, 1f),
-        new Vector3(1f, 1f, -1f),
-        new Vector3(1f, -1f, -1f),
-        new Vector3(-1f, 1f, -1f),
-        new Vector3(-1f, -1f, -1f)};
-
-
 
     // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        //rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -43,42 +23,20 @@ public class camFollow : MonoBehaviour
     }
     void inputToPosition()
     {
-        Quaternion qu = Quaternion.LookRotation(transform.position - anchor.position, anchor.up);
-        Vector3 nextPos = anchor.position
-        + Vector3.Normalize(Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
+        Vector3 direction = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
         Vector3.Cross(transform.position - anchor.position, anchor.up))
         * Quaternion.AngleAxis(Input.GetAxis("Mouse X") * mouseSensitivity, anchor.up)
-        * qu * Vector3.forward) * magnitude;
-        Vector3 dir = nextPosCollider(nextPos);
-        if (dir == Vector3.zero)
+        * Quaternion.LookRotation(transform.position - anchor.position, anchor.up) * Vector3.forward;
+        RaycastHit Hit;
+        
+        if(Physics.Raycast(anchor.position,direction, out Hit, magnitude + 0.1f, GroundLayers))
         {
-            transform.position = nextPos;
-            transform.LookAt(anchor, anchor.up);
+            transform.position = anchor.position + direction * (Vector3.Distance(anchor.position,Hit.point)-0.3f);
         }
         else
         {
-            transform.position = anchor.position + qu * Vector3.forward * magnitude;
-            transform.LookAt(anchor, anchor.up);
+            transform.position = anchor.position + direction * magnitude;
         }
-
-        
-        //Debug.Log(nextPosCollider(nextPos));
-    }
-    Vector3 nextPosCollider(Vector3 pos)
-    {
-        Vector3 HitDir = Vector3.zero;
-        //bool result = false;
-        RaycastHit Hit;
-        foreach (Vector3 item in positions)
-        {
-            if(Physics.Raycast(pos, item + pos, out Hit, rayDistance, GroundLayers))
-            {
-                HitDir += Hit.normal;
-                //result = true; 
-                break;
-            };
-            Debug.DrawLine(pos, item + pos);
-        }
-        return HitDir;
+        transform.LookAt(anchor, anchor.up);
     }
 }
