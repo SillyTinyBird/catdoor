@@ -52,18 +52,9 @@ public class playerMovement : MonoBehaviour
                 Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward,floor), floor), smoothTime));
 
             //AVOID SHARP CORNERS!!!
+            //also, avoid angles on which camera cant keep up (controll looses(since contorlls are dependant on camera position))
         }
-        //Debug.Log(floor);
-        float dist =  Vector3.Distance(HitCentre.point, transform.position);
-        if (dist < floorDist)
-        {
-            
-            rb.MovePosition(HitCentre.point + floor * floorDist);
-        }
-        else
-        {
-            MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime) - transform.position;
-        }
+        MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime) - transform.position;
         Debug.DrawLine(transform.position, MoveSum, Color.magenta, 0, false);
         rb.MovePosition(MoveSum);
 
