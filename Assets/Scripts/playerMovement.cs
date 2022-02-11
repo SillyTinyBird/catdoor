@@ -1,21 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class playerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public float movementSpeed= 5f;
     public Transform cam;
     public float rayDistance = 10f;
     public float floorDist;
     public float delta;
-    public Transform[] GroundChecks;
     public Transform GroundParent;
     public LayerMask GroundLayers;
     private Rigidbody rb;
     public float smoothTime = 0.3F;
     private Vector3 velocity = Vector3.zero;
-    //private camFollow cameraController;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -24,8 +20,8 @@ public class playerMovement : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        RaycastHit HitCentre;
-        Physics.Raycast(GroundChecks[0].position, -GroundChecks[0].transform.up, out HitCentre, rayDistance, GroundLayers);
+
+        Physics.Raycast(GroundParent.GetChild(0).position, -GroundParent.GetChild(0).transform.up, out RaycastHit HitCentre, rayDistance, GroundLayers);
         Vector3 floor = FloorAngleCheck();//geting flor mormal vector info
 
 
@@ -52,48 +48,11 @@ public class playerMovement : MonoBehaviour
                 Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward,floor), floor), smoothTime));
 
             //AVOID SHARP CORNERS!!!
-            //also, avoid angles on which camera cant keep up (controll looses(since contorlls are dependant on camera position))
         }
+        
         MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime) - transform.position;
         Debug.DrawLine(transform.position, MoveSum, Color.magenta, 0, false);
         rb.MovePosition(MoveSum);
-
-    }
-    void DrawDebug(Vector3 viewDirection, Vector3 direction)
-    {
-        Debug.DrawLine(transform.position, transform.position + cam.position - transform.position, Color.magenta, 0.0f, false);
-        DrawPlane(transform.position, transform.up);
-        Debug.DrawLine(transform.position, transform.position + viewDirection.normalized, Color.blue, 0.0f, false);
-        Debug.DrawLine(transform.position, transform.position + direction, Color.white, 0.0f, false);
-    }
-    void DrawPlane(Vector3 position, Vector3 normal)
-    {
-
-        Vector3 v3;
-
-        if (normal.normalized != Vector3.forward)
-        {
-            v3 = Vector3.Cross(normal, Vector3.forward).normalized * normal.magnitude;
-        }
-        else
-        {
-            v3 = Vector3.Cross(normal, Vector3.up).normalized * normal.magnitude;
-        }
-
-        var corner0 = position + v3;
-        var corner2 = position - v3;
-        var q = Quaternion.AngleAxis(90.0f, normal);
-        v3 = q * v3;
-        var corner1 = position + v3;
-        var corner3 = position - v3;
-
-        Debug.DrawLine(corner0, corner2, Color.green);
-        Debug.DrawLine(corner1, corner3, Color.green);
-        Debug.DrawLine(corner0, corner1, Color.green);
-        Debug.DrawLine(corner1, corner2, Color.green);
-        Debug.DrawLine(corner2, corner3, Color.green);
-        Debug.DrawLine(corner3, corner0, Color.green);
-        Debug.DrawRay(position, normal, Color.red);
     }
     Vector3 FloorAngleCheck()
     {
@@ -101,8 +60,7 @@ public class playerMovement : MonoBehaviour
         for (int i = 0; i < GroundParent.childCount; i++)
         {
             Transform item = GroundParent.GetChild(i);
-            RaycastHit Hit;
-            Physics.Raycast(item.position, -item.transform.up, out Hit, rayDistance, GroundLayers);
+            Physics.Raycast(item.position, -item.transform.up, out RaycastHit Hit, rayDistance, GroundLayers);
             if (Hit.transform != null)
             {
                 HitDir += Hit.normal;

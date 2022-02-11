@@ -1,5 +1,5 @@
 using UnityEngine;
-public class camFollow : MonoBehaviour
+public class CamFollow : MonoBehaviour
 {
     [Range(0.05f, 10.0f)]
     public float mouseSensitivity;
@@ -17,9 +17,9 @@ public class camFollow : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        inputToPosition();
+        InputToPosition();
     }
-    void inputToPosition()
+    void InputToPosition()
     {
 
         Vector3 point = anchor.position + anchor.up;
@@ -30,7 +30,7 @@ public class camFollow : MonoBehaviour
         previousUp = anchor.up;
         if (Physics.Raycast(point, direction, out RaycastHit Hit, magnitude + 0.1f, GroundLayers))
         {
-            transform.position = point + (direction * (Vector3.Distance(point, Hit.point) - 0.3f));
+            transform.position = point + (direction * (Vector3.Distance(point, Hit.point) - 0.1f));
         }
         else
         {
