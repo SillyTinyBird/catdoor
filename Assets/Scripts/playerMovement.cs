@@ -39,7 +39,7 @@ public class playerMovement : MonoBehaviour
 
         if(Input.GetAxis("Vertical") > 0)
         {
-            MoveSum += Vector3.Lerp(transform.position, transform.position + viewDirection.normalized * movementSpeed * Time.fixedDeltaTime, Input.GetAxis("Vertical")) - transform.position;//input on t alows smooth speed up and fade out
+            MoveSum += Vector3.Lerp(transform.position, transform.position + movementSpeed * Time.fixedDeltaTime * viewDirection.normalized, Input.GetAxis("Vertical")) - transform.position;//input on t alows smooth speed up and fade out
 
             rb.MoveRotation(Quaternion.Slerp(transform.rotation,
                 Quaternion.LookRotation(viewDirection.normalized, floor),
@@ -58,10 +58,6 @@ public class playerMovement : MonoBehaviour
         Debug.DrawLine(transform.position, MoveSum, Color.magenta, 0, false);
         rb.MovePosition(MoveSum);
 
-    }
-    void rotateTowardsMoveDirection(Vector3 forward)
-    {
-        rb.MoveRotation(Quaternion.LookRotation(forward, transform.up));
     }
     void DrawDebug(Vector3 viewDirection, Vector3 direction)
     {
@@ -111,7 +107,7 @@ public class playerMovement : MonoBehaviour
             {
                 HitDir += Hit.normal;
                 Debug.DrawLine(item.position, Hit.point);
-                //DrawSurface(Hit);
+                DrawSurface(Hit);
             }
         }
         Debug.DrawLine(transform.position, transform.position + (HitDir.normalized * 5f), Color.cyan);

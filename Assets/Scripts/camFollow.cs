@@ -6,10 +6,11 @@ public class camFollow : MonoBehaviour
     public Transform anchor;
     public float magnitude;
     public LayerMask GroundLayers;
-
+    private Vector3 previousUp;
     // Start is called before the first frame update
     void Start()
     {
+        previousUp = anchor.up;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -20,14 +21,14 @@ public class camFollow : MonoBehaviour
     }
     void inputToPosition()
     {
+
         Vector3 point = anchor.position + anchor.up;
-        Vector3 direction = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
+        Vector3 direction = Quaternion.FromToRotation(previousUp,anchor.up) * Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
         Vector3.Cross(transform.position - point, anchor.up))
         * Quaternion.AngleAxis(Input.GetAxis("Mouse X") * mouseSensitivity, anchor.up)
         * Quaternion.LookRotation(transform.position - point, anchor.up) * Vector3.forward;
-
-        RaycastHit Hit;
-        if (Physics.Raycast(point, direction, out Hit, magnitude + 0.1f, GroundLayers))
+        previousUp = anchor.up;
+        if (Physics.Raycast(point, direction, out RaycastHit Hit, magnitude + 0.1f, GroundLayers))
         {
             transform.position = point + (direction * (Vector3.Distance(point, Hit.point) - 0.3f));
         }
