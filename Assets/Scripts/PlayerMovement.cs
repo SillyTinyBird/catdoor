@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float movementSpeed= 5f;
+    public float movementSpeed = 5f;
     public Transform cam;
     public float rayDistance = 10f;
     public float floorDist;
@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     public float smoothTime = 0.3F;
     private Vector3 velocity = Vector3.zero;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -22,7 +21,6 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
 
-        Physics.Raycast(GroundParent.GetChild(0).position, -GroundParent.GetChild(0).transform.up, out RaycastHit HitCentre, rayDistance, GroundLayers);
         Vector3 floor = FloorAngleCheck();//geting flor mormal vector info
 
 
@@ -32,26 +30,33 @@ public class PlayerMovement : MonoBehaviour
         Vector3 MoveSum = transform.position;
 
         //rb.MovePosition(HitCentre.point + floor * floorDist);
+        if(Physics.Raycast(GroundParent.GetChild(0).position, -GroundParent.GetChild(0).transform.up, out RaycastHit HitCentre, rayDistance, GroundLayers))
+        {
+            MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime) - transform.position;
+        }
+        else
+        {
+            //add gravity here//
+        }
 
-
-        if(Input.GetAxis("Vertical") > 0)
+        if (Input.GetAxis("Vertical") > 0)
         {
             MoveSum += Vector3.Lerp(transform.position, transform.position + movementSpeed * Time.fixedDeltaTime * viewDirection.normalized, Input.GetAxis("Vertical")) - transform.position;//input on t alows smooth speed up and fade out
 
             rb.MoveRotation(Quaternion.Slerp(transform.rotation,
                 Quaternion.LookRotation(viewDirection.normalized, floor),
                 smoothTime));
-            
+
         }
         else
         {
             rb.MoveRotation(Quaternion.Slerp(transform.rotation,
-                Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward,floor), floor), smoothTime));
+                Quaternion.LookRotation(Vector3.ProjectOnPlane(transform.forward, floor), floor), smoothTime));
 
             //AVOID SHARP CORNERS!!!
         }
+
         
-        MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * (floorDist + 0.1f), ref velocity, smoothTime) - transform.position;
         Debug.DrawLine(transform.position, MoveSum, Color.magenta, 0, false);
         rb.MovePosition(MoveSum);
     }

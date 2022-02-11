@@ -341,9 +341,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 6.5
   anchor: {fileID: 613582722}
-  smoothTime: 0.05
-  magnitude: 3.05
-  rayDistance: 1
+  magnitude: 2.25
   GroundLayers:
     serializedVersion: 2
     m_Bits: 64
@@ -408,7 +406,7 @@ BoxCollider:
   m_GameObject: {fileID: 453774242}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -572,16 +570,6 @@ MonoBehaviour:
   rayDistance: 2
   floorDist: 0.4
   delta: 0.04
-  GroundChecks:
-  - {fileID: 2077865345}
-  - {fileID: 1695579983}
-  - {fileID: 348735136}
-  - {fileID: 1145098448}
-  - {fileID: 1280346614}
-  - {fileID: 1208440119}
-  - {fileID: 1245463070}
-  - {fileID: 2046325706}
-  - {fileID: 481729392}
   GroundParent: {fileID: 1223427634}
   GroundLayers:
     serializedVersion: 2
