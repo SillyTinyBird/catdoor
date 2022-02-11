@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     public float smoothTime = 0.3F;
     private Vector3 velocity = Vector3.zero;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
