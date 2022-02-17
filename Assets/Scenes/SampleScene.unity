@@ -568,13 +568,14 @@ MonoBehaviour:
   movementSpeed: 2
   cam: {fileID: 388256848}
   rayDistance: 2
-  floorDist: 0.4
+  floorDist: 0.45
   delta: 0.04
   GroundParent: {fileID: 1223427634}
   GroundLayers:
     serializedVersion: 2
     m_Bits: 64
   smoothTime: 0.15
+  fallSpeed: 0.5
 --- !u!4 &613582722
 Transform:
   m_ObjectHideFlags: 0
@@ -583,7 +584,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 613582719}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.934, z: 0}
+  m_LocalPosition: {x: 0, y: -3.994, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1383778759}
