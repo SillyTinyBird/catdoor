@@ -575,7 +575,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   smoothTime: 0.15
-  fallSpeed: 0.5
+  fallSpeed: 5
 --- !u!4 &613582722
 Transform:
   m_ObjectHideFlags: 0

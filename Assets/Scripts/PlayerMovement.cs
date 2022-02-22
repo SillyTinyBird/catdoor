@@ -9,41 +9,39 @@ public class PlayerMovement : MonoBehaviour
     public float delta;
     public Transform GroundParent;
     public LayerMask GroundLayers;
-    private Rigidbody rb;
+    public Rigidbody rb;
     public float smoothTime = 0.3F;
-    private Vector3 velocity = Vector3.zero;
-    private Vector3 previousUp;
+    public Vector3 velocity = Vector3.zero;
+    public Vector3 previousUp;
     public float fallSpeed = 0.5f;
-    private bool isFaling = false;
+    public float fallSpeedMovement = 1f;
+    public float currentVelocity = 1f;
+    //state machine
+    private MovementBase currentState;
+    public StateOnGround stateGround = new StateOnGround();
+    public StateOnEdge stateEdge = new StateOnEdge();
+    public StateInAir stateAir = new StateInAir();
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         previousUp = transform.up;
+        currentState = stateGround;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
-        Vector3 floor;
-        bool notHits = FloorAngleCheck(out floor);//geting flor mormal vector info
-
-        Vector3 viewDirection = cam.position - transform.position;
-        viewDirection = Vector3.Scale(viewDirection, new Vector3(-1, -1, -1));
-        viewDirection = Vector3.ProjectOnPlane(viewDirection, floor);
-        Vector3 MoveSum = transform.position;
-        Quaternion RotSum = transform.rotation;
-        bool ray = Physics.Raycast(GroundParent.GetChild(0).position, -GroundParent.GetChild(0).transform.up, out RaycastHit HitCentre, floorDist + 0.05f, GroundLayers);
-        //ray shows if we on the ground
         //rb.MovePosition(HitCentre.point + floor * floorDist);
-        
+        currentState.UpdateState(this);
+        /*
         if (notHits)
         {
             //move up-down
             MoveSum += Vector3.SmoothDamp(transform.position, HitCentre.point + floor * floorDist, ref velocity, smoothTime) - transform.position;
             if (Input.GetAxis("Vertical") != 0)
             {
-                MoveSum += Vector3.Lerp(transform.position, transform.position + movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * Input.GetAxis("Vertical"), Mathf.Abs(Input.GetAxis("Vertical"))) - transform.position;//input on t alows smooth speed up and fade out
+                MoveSum += Vector3.Lerp(transform.position, transform.position + movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * Input.GetAxis("Vertical") + movementSpeed * Time.fixedDeltaTime * transform.right * Input.GetAxis("Horizontal"), Mathf.Abs(Input.GetAxis("Vertical"))) - transform.position;//input on t alows smooth speed up and fade out
                 rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(viewDirection.normalized, floor), smoothTime));
                 //other movement needs to be put in one line, in (Input.GetAxis("Vertical") > 0) shoud stay only rotation
             }
@@ -76,14 +74,26 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 //idk add here coroutine of falling or something idk
-                MoveSum += Vector3.Lerp(transform.position, transform.position + fallSpeed * Time.fixedDeltaTime * Vector3.Scale(transform.up,new Vector3(-1,-1,-1)) , 0.5f) - transform.position;
+                MoveSum += Vector3.Lerp(transform.position, transform.position + fallSpeed * Time.fixedDeltaTime * Vector3.Scale(transform.up,new Vector3(-1,-1,-1)) + fallSpeedMovement * Time.fixedDeltaTime * transform.right * Input.GetAxis("Horizontal"), 0.5f) - transform.position;
             }
 
         }
 
         //3,5,9,11
         Debug.DrawLine(transform.position, MoveSum, Color.magenta, 0, false);
-        rb.MovePosition(MoveSum);
+        rb.MovePosition(MoveSum);*/
+        Debug.Log(currentState);
+    }
+    public void SwitchState(MovementBase state)
+    {
+        currentState = state;
+    }
+    public Vector3 GetViewDirection(Vector3 floor)
+    {
+        Vector3 viewDirection = cam.position - transform.position;
+        viewDirection = Vector3.Scale(viewDirection, new Vector3(-1, -1, -1));
+        viewDirection = Vector3.ProjectOnPlane(viewDirection, floor);
+        return viewDirection;
     }
     bool onTheGround()
     {
@@ -98,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
         }
         return true;
     }
-    bool FloorAngleCheck(out Vector3 floor)//returns false if not on floor
+    public bool FloorAngleCheck(out Vector3 floor)//returns false if not on floor
     {
         bool ret = true;
         Vector3 HitDir = Vector3.zero;
