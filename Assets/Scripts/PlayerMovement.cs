@@ -108,9 +108,10 @@ public class PlayerMovement : MonoBehaviour
         }
         return true;
     }
-    public bool FloorAngleCheck(out Vector3 floor)//returns false if not on floor
+    public bool FloorAngleCheck(out Vector3 floor,out float avgDistance)//returns false if not on floor
     {
         bool ret = true;
+        float dist = 0;
         Vector3 HitDir = Vector3.zero;
         for (int i = 0; i < GroundParent.childCount; i++)
         {
@@ -121,6 +122,7 @@ public class PlayerMovement : MonoBehaviour
                 HitDir += Hit.normal;
                 Debug.DrawLine(item.position, Hit.point);
                 DrawSurface(Hit);
+                dist += Hit.distance;
             }
             else
             {
@@ -129,6 +131,7 @@ public class PlayerMovement : MonoBehaviour
         }
         Debug.DrawLine(transform.position, transform.position + (HitDir.normalized * 2f), Color.cyan);
         floor =  HitDir.normalized;
+        avgDistance = dist/GroundParent.childCount;
         return ret;
     }
     void DrawSurface(RaycastHit hit)
