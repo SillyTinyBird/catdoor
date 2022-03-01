@@ -10,8 +10,8 @@ public class StateOnEdge : MovementBase
         Vector3 MoveSum = context.transform.position;
         if (Input.GetAxis("Vertical") != 0)
         {
-            MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context.movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * Input.GetAxis("Vertical"), Mathf.Abs(Input.GetAxis("Vertical"))) - context.transform.position;//input on t alows smooth speed up and fade out
-            context.rb.MoveRotation(Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(viewDirection.normalized, context.previousUp), context.smoothTime));
+            MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context.movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * Input.GetAxis("Vertical") + context.movementSpeed * 0.5f * Time.fixedDeltaTime * context.transform.right * Input.GetAxis("Horizontal"), Mathf.Abs(Input.GetAxis("Vertical"))) - context.transform.position;//input on t alows smooth speed up and fade out
+            context.rb.MoveRotation(Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(viewDirection.normalized + context.transform.right * Input.GetAxis("Horizontal") * 0.5f, context.previousUp), context.smoothTime));
             //other movement needs to be put in one line, in (Input.GetAxis("Vertical") > 0) shoud stay only rotation
             //Debug.Log(context.previousUp);
         }

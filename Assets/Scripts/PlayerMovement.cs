@@ -9,13 +9,18 @@ public class PlayerMovement : MonoBehaviour
     public float delta;
     public Transform GroundParent;
     public LayerMask GroundLayers;
+    [HideInInspector]
     public Rigidbody rb;
     public float smoothTime = 0.3F;
     public Vector3 velocity = Vector3.zero;
     public Vector3 previousUp;
     public float fallSpeed = 0.5f;
     public float fallSpeedMovement = 1f;
-    public float currentVelocity = 1f;
+    [HideInInspector]
+    public Vector3 moveDirection = Vector3.zero;
+    private Vector3 previousPos;
+    [HideInInspector]
+    public float currentVelocity = 0.0f;
     //state machine
     private MovementBase currentState;
     public StateOnGround stateGround = new StateOnGround();
@@ -26,12 +31,16 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         previousUp = transform.up;
+        previousPos = transform.position;
         currentState = stateGround;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        moveDirection = (transform.position - previousPos)*movementSpeed;
+        previousPos = transform.position;
+        Debug.Log(moveDirection);
         //rb.MovePosition(HitCentre.point + floor * floorDist);
         currentState.UpdateState(this);
         /*
@@ -112,6 +121,7 @@ public class PlayerMovement : MonoBehaviour
     {
         bool ret = true;
         float dist = 0;
+        int miss = 0;
         Vector3 HitDir = Vector3.zero;
         for (int i = 0; i < GroundParent.childCount; i++)
         {
@@ -127,11 +137,16 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 ret = false;
+                miss++;
             }
         }
         Debug.DrawLine(transform.position, transform.position + (HitDir.normalized * 2f), Color.cyan);
         floor =  HitDir.normalized;
         avgDistance = dist/GroundParent.childCount;
+        if(miss > Mathf.CeilToInt( 2.0f/3.0f * GroundParent.childCount))
+        {
+            floor = Vector3.zero;
+        }
         return ret;
     }
     void DrawSurface(RaycastHit hit)
