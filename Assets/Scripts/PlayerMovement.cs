@@ -17,9 +17,6 @@ public class PlayerMovement : MonoBehaviour
     public float fallSpeed = 0.5f;
     public float fallSpeedMovement = 1f;
     [HideInInspector]
-    public Vector3 moveDirection = Vector3.zero;
-    private Vector3 previousPos;
-    [HideInInspector]
     public float currentVelocity = 0.0f;
     //state machine
     private MovementBase currentState;
@@ -31,16 +28,12 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         previousUp = transform.up;
-        previousPos = transform.position;
         currentState = stateGround;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        moveDirection = (transform.position - previousPos)*movementSpeed;
-        previousPos = transform.position;
-        Debug.Log(moveDirection);
         //rb.MovePosition(HitCentre.point + floor * floorDist);
         currentState.UpdateState(this);
         /*
@@ -97,25 +90,18 @@ public class PlayerMovement : MonoBehaviour
     {
         currentState = state;
     }
+    public void Jump()
+    {
+        currentVelocity = -6f;
+        currentState = stateAir;
+        currentState.UpdateState(this);
+    }
     public Vector3 GetViewDirection(Vector3 floor)
     {
         Vector3 viewDirection = cam.position - transform.position;
         viewDirection = Vector3.Scale(viewDirection, new Vector3(-1, -1, -1));
         viewDirection = Vector3.ProjectOnPlane(viewDirection, floor);
         return viewDirection;
-    }
-    bool onTheGround()
-    {
-        int[] corners = { 3, 5, 9, 11 };
-        foreach (int i in corners)
-        {
-            Transform item = GroundParent.GetChild(i);
-            if(!Physics.Raycast(item.position, -transform.up, out _, floorDist+0.1f, GroundLayers))
-            {
-                return false;
-            }
-        }
-        return true;
     }
     public bool FloorAngleCheck(out Vector3 floor,out float avgDistance)//returns false if not on floor
     {

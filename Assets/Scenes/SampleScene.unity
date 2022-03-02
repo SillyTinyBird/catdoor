@@ -1706,7 +1706,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.29
-  m_Height: 0.97
+  m_Height: 0.88
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &613582721
@@ -1734,9 +1734,10 @@ MonoBehaviour:
   smoothTime: 0.15
   velocity: {x: 0, y: 0, z: 0}
   previousUp: {x: 0, y: 0, z: 0}
-  fallSpeed: 0
+  fallSpeed: 1
   fallSpeedMovement: 1
-  currentVelocity: 1
+  moveDirection: {x: 0, y: 0, z: 0}
+  currentVelocity: 0
 --- !u!4 &613582722
 Transform:
   m_ObjectHideFlags: 0

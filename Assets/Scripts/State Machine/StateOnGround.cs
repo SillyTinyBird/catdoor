@@ -4,6 +4,11 @@ public class StateOnGround : MovementBase
 {
     public override void UpdateState(PlayerMovement context)
     {
+        if(Input.GetAxis("Jump") != 0)
+        {
+            context.Jump();
+            return;
+        }
         Vector3 floor;
         bool notHits = context.FloorAngleCheck(out floor, out float avgDistance);//geting flor mormal vector info
         Vector3 viewDirection = context.GetViewDirection(floor);
