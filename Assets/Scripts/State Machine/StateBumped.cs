@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class StateOnEdge : MovementBase
+public class StateBumped : MovementBase
 {
     public override void UpdateState(PlayerMovement context)
     {
+        context.BumpMove();
         Vector3 floor;
         bool notHits = context.FloorAngleCheck(out floor, out float avgDistance);//geting flor mormal vector info
         Vector3 viewDirection = context.GetViewDirection(context.previousUp);
@@ -26,13 +27,13 @@ public class StateOnEdge : MovementBase
         {
             context.SwitchState(context.stateAir);
         }
-        if (notHits)
+        if (!notHits)
+        {
+            context.SwitchState(context.stateEdge);
+        }
+        if (!context.bumped)
         {
             context.SwitchState(context.stateGround);
         }
-        /*if (!context.bumped)
-        {
-            context.SwitchState(context.stateGround);
-        }*/
     }
 }

@@ -23,10 +23,9 @@ public class StateInAir : MovementBase
             //ANY OTHER MOVEMENT
         }
         context.rb.MovePosition(MoveSum);
-        if (context.currentVelocity <=13)
+        if (context.currentVelocity <= 13)
         {
-            Debug.Log(context.currentVelocity);
-            context.currentVelocity += Time.fixedDeltaTime*10;
+            context.currentVelocity += Time.fixedDeltaTime * 10;
         }
         if (Physics.Raycast(context.GroundParent.GetChild(0).position, -context.GroundParent.GetChild(0).transform.up, out RaycastHit HitCentre, context.floorDist + 0.05f, context.GroundLayers))
         {

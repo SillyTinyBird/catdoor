@@ -4,9 +4,16 @@ public class StateOnGround : MovementBase
 {
     public override void UpdateState(PlayerMovement context)
     {
-        if(Input.GetAxis("Jump") != 0)
+        if (Input.GetAxis("Jump") != 0)
         {
             context.Jump();
+            return;
+        }
+        context.BumpMove();
+        if (context.bumped)
+        {
+            context.SwitchState(context.stateBumped);
+            context.stateBumped.UpdateState(context);
             return;
         }
         Vector3 floor;
@@ -32,18 +39,9 @@ public class StateOnGround : MovementBase
         }
         context.previousUp = floor;
         context.rb.MovePosition(MoveSum);
-        if(!notHits)
+        if (!notHits)
         {
             context.SwitchState(context.stateEdge);
         }
-        /*if(input.getaxis(jump)
-    context.velocity = 10
-    context.state = in air*/
-    }
-    public bool IsBetween(float value, float bound1, float bound2)
-    {
-        if (bound1 > bound2)
-            return value >= bound2 && value <= bound1;
-        return value >= bound1 && value <= bound2;
     }
 }
