@@ -9,7 +9,6 @@ public class StateOnGround : MovementBase
             context.Jump();
             return;
         }
-        context.BumpMove();
         if (context.bumped)
         {
             context.SwitchState(context.stateBumped);
@@ -27,15 +26,11 @@ public class StateOnGround : MovementBase
         {
             MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context.movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * Input.GetAxis("Vertical") + context.movementSpeed * 0.5f * Time.fixedDeltaTime * context.transform.right * Input.GetAxis("Horizontal"), Mathf.Abs(Input.GetAxis("Vertical"))) - context.transform.position;//input on t alows smooth speed up and fade out
             context.rb.MoveRotation(Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(viewDirection.normalized + context.transform.right * Input.GetAxis("Horizontal") * 0.5f, floor), context.smoothTime));
-            //other movement needs to be put in one line, in (Input.GetAxis("Vertical") > 0) shoud stay only rotation
-
-            //place side movement into rotations to eliminate drifts!!!
         }
         else
         {
             MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context.movementSpeed * Time.fixedDeltaTime * context.transform.right * Input.GetAxis("Horizontal"), 0.3f) - context.transform.position;
             context.rb.MoveRotation(Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(Vector3.ProjectOnPlane(context.transform.forward, floor), floor), context.smoothTime));
-            //ANY OTHER MOVEMENT
         }
         context.previousUp = floor;
         context.rb.MovePosition(MoveSum);

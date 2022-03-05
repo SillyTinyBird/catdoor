@@ -45,14 +45,6 @@ public class PlayerMovement : MonoBehaviour
 
         Debug.Log(currentState);
     }
-    public void BumpMove() => bump.localPosition = bumpOrigin + (Vector3.right * 0.1f * RangeInt(Input.GetAxis("Horizontal"))) + (Vector3.forward * 0.1f * RangeInt(Input.GetAxis("Vertical")));
-    private int RangeInt(float input)
-    {
-        if (input == 0) return 0;
-        if (input > 0) return 1;
-        if (input < 0) return -1;
-        return 0;
-    }
     private void OnTriggerEnter(Collider other) => bumped = true;
     private void OnTriggerExit(Collider other) => bumped = false;
     public void SwitchState(MovementBase state) => currentState = state;
