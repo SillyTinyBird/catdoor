@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public StateInAir stateAir = new StateInAir();
     public StateBumped stateBumped = new StateBumped();
 
-    private Vector3 bumpOrigin;
+
     public Transform bump;
     public bool bumped = false;
 
@@ -35,7 +35,6 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         previousUp = transform.up;
         currentState = stateGround;
-        bumpOrigin = bump.localPosition;
     }
 
     // Update is called once per frame
@@ -43,11 +42,21 @@ public class PlayerMovement : MonoBehaviour
     {
         currentState.UpdateState(this);
 
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Walkable")) bumped = true;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Walkable")) bumped = false;
+    }
+    public void SwitchState(MovementBase state)
+    {
+
+        currentState = state;
         Debug.Log(currentState);
     }
-    private void OnTriggerEnter(Collider other) => bumped = true;
-    private void OnTriggerExit(Collider other) => bumped = false;
-    public void SwitchState(MovementBase state) => currentState = state;
     public void Jump()
     {
         currentVelocity = -6f;

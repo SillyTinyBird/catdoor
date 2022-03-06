@@ -4,7 +4,7 @@ public class StateOnGround : MovementBase
 {
     public override void UpdateState(PlayerMovement context)
     {
-        if (Input.GetAxis("Jump") != 0)
+        if (Input.GetAxis("Jump") != 0)//happens two times for each jump
         {
             context.Jump();
             return;
