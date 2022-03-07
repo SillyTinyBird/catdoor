@@ -9,6 +9,7 @@ public class FlipPlatform : MonoBehaviour
     {
         if(other.name == "Player")
         {
+
             player.SwitchState(player.stateAir);
             player.previousUp = player.previousUp * -1;
         }
