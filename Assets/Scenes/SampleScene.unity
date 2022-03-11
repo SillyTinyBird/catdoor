@@ -1021,7 +1021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ede7c495d764644186bffbd1e681934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 6.5
+  mouseSensitivity: 1
   anchor: {fileID: 613582722}
   magnitude: 2.25
   GroundLayers:
@@ -1466,23 +1466,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 987b5cf2cb02d1f4a858a3dc42457ae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 2
-  cam: {fileID: 388256848}
-  rayDistance: 2
-  floorDist: 0.45
-  GroundParent: {fileID: 1223427634}
-  GroundLayers:
+  _movementSpeed: 5
+  _cam: {fileID: 388256848}
+  _rayDistance: 2
+  _floorDist: 0.4
+  _parentOfFloorRayOrigins: {fileID: 1223427634}
+  _groundLayerRaycast:
     serializedVersion: 2
     m_Bits: 64
-  rb: {fileID: 0}
-  smoothTime: 0.115
-  velocity: {x: 0, y: 0, z: 0}
-  previousUp: {x: 0, y: 0, z: 0}
-  fallSpeed: 1
-  fallSpeedMovement: 1
-  currentVelocity: 0
-  bump: {fileID: 175844296}
-  bumped: 0
+  _playerRigidBody: {fileID: 613582724}
+  _smoothtimeDivision: 0.3
+  _velocity: {x: 0, y: 0, z: 0}
+  _currentFallVelocity: 0
 --- !u!4 &613582722
 Transform:
   m_ObjectHideFlags: 0

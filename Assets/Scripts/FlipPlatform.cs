@@ -11,7 +11,7 @@ public class FlipPlatform : MonoBehaviour
         {
 
             player.SwitchState(player.stateAir);
-            player.previousUp = player.previousUp * -1;
+            player.PreviousUpDirection *= -1;
         }
     }
 }

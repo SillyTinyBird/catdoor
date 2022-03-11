@@ -6,18 +6,18 @@ public class StateBumped : MovementBase
     {
         Vector3 floor;
         bool notHits = context.FloorAngleCheck(out floor, out float avgDistance);//geting flor mormal vector info
-        Vector3 viewDirection = context.GetViewDirection(context.previousUp);
+        Vector3 viewDirection = context.GetViewDirection(context.PreviousUpDirection);
         Vector3 MoveSum = context.transform.position;
-        if (Input.GetAxis("Vertical") != 0)
+        if (context.GetMovementControllInputVector.y != 0)
         {
-            MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context.movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * Input.GetAxis("Vertical") + context.movementSpeed * 0.5f * Time.fixedDeltaTime * context.transform.right * Input.GetAxis("Horizontal"), Mathf.Abs(Input.GetAxis("Vertical"))) - context.transform.position;//input on t alows smooth speed up and fade out
-            context.rb.MoveRotation(Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(viewDirection.normalized + context.transform.right * Input.GetAxis("Horizontal") * 0.5f, context.previousUp), context.smoothTime));
+            MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context._movementSpeed * Time.fixedDeltaTime * viewDirection.normalized * context.GetMovementControllInputVector.y + context._movementSpeed * 0.5f * Time.fixedDeltaTime * context.transform.right * context.GetMovementControllInputVector.x, Mathf.Abs(context.GetMovementControllInputVector.y)) - context.transform.position;//input on t alows smooth speed up and fade out
+            context._playerRigidBody.MoveRotation(Quaternion.Slerp(context.transform.rotation, Quaternion.LookRotation(viewDirection.normalized + context.transform.right * context.GetMovementControllInputVector.x * 0.5f, context.PreviousUpDirection), context._smoothtimeDivision));
         }
         else
         {
-            MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context.movementSpeed * Time.fixedDeltaTime * context.transform.right * Input.GetAxis("Horizontal"), 0.3f) - context.transform.position;
+            MoveSum += Vector3.Lerp(context.transform.position, context.transform.position + context._movementSpeed * Time.fixedDeltaTime * context.transform.right * context.GetMovementControllInputVector.x, 0.3f) - context.transform.position;
         }
-        context.rb.MovePosition(MoveSum);
+        context._playerRigidBody.MovePosition(MoveSum);
         if (floor == Vector3.zero)
         {
             context.SwitchState(context.stateAir);
@@ -26,7 +26,7 @@ public class StateBumped : MovementBase
         {
             context.SwitchState(context.stateEdge);
         }
-        if (!context.bumped)
+        if (!context.CheckBumpedCondition)
         {
             context.SwitchState(context.stateGround);
         }

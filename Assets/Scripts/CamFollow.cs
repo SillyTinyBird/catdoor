@@ -7,7 +7,10 @@ public class CamFollow : MonoBehaviour
     public float magnitude;
     public LayerMask GroundLayers;
     private Vector3 previousUp;
-    // Start is called before the first frame update
+    private InputMap _inputMap;
+    private void Awake() => _inputMap = new InputMap();
+    private void OnEnable() => _inputMap.Enable();
+    private void OnDisable() => _inputMap.Disable();
     void Start()
     {
         previousUp = anchor.up;
@@ -18,14 +21,15 @@ public class CamFollow : MonoBehaviour
     void FixedUpdate()
     {
         InputToPosition();
+
     }
     void InputToPosition()
     {
-
+        Vector2 mouseInput = _inputMap.Player.Camera.ReadValue<Vector2>();
         Vector3 point = anchor.position + anchor.up;
-        Vector3 direction = Quaternion.FromToRotation(previousUp,anchor.up) * Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * mouseSensitivity,
+        Vector3 direction = Quaternion.FromToRotation(previousUp,anchor.up) * Quaternion.AngleAxis(mouseInput.y * mouseSensitivity,
         Vector3.Cross(transform.position - point, anchor.up))
-        * Quaternion.AngleAxis(Input.GetAxis("Mouse X") * mouseSensitivity, anchor.up)
+        * Quaternion.AngleAxis(mouseInput.x * mouseSensitivity, anchor.up)
         * Quaternion.LookRotation(transform.position - point, anchor.up) * Vector3.forward;
         previousUp = anchor.up;
         if (Physics.Raycast(point, direction, out RaycastHit Hit, magnitude + 0.1f, GroundLayers))

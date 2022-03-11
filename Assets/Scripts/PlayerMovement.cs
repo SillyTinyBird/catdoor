@@ -2,70 +2,67 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float movementSpeed = 5f;
-    public Transform cam;
-    public float rayDistance = 10f;
-    public float floorDist;
-    public Transform GroundParent;
-    public LayerMask GroundLayers;
+    public float _movementSpeed = 5f;
+    public Transform _cam;
+    public float _rayDistance = 10f;
+    public float _floorDist;
+    public Transform _parentOfFloorRayOrigins;
+    public LayerMask _groundLayerRaycast;
+    public Rigidbody _playerRigidBody;
+    public float _smoothtimeDivision = 0.3F;
     [HideInInspector]
-    public Rigidbody rb;
-    public float smoothTime = 0.3F;
-    public Vector3 velocity = Vector3.zero;
-    public Vector3 previousUp;
-    public float fallSpeed = 0.5f;
-    public float fallSpeedMovement = 1f;
+    public Vector3 _velocity = Vector3.zero;
+    private Vector3 previousUpDirection;
     [HideInInspector]
-    public float currentVelocity = 0.0f;
-
+    public float _currentFallVelocity = 0.0f;
 
     //state machine
-    private MovementBase currentState;
+    private MovementBase _currentState;
     public StateOnGround stateGround = new StateOnGround();
     public StateOnEdge stateEdge = new StateOnEdge();
     public StateInAir stateAir = new StateInAir();
     public StateBumped stateBumped = new StateBumped();
+    
+    private bool _bumped = false;
 
+    private InputMap _inputMap;
 
-    public Transform bump;
-    public bool bumped = false;
-
+    private void Awake() => _inputMap = new InputMap();
+    private void OnEnable() => _inputMap.Enable();
+    private void OnDisable() => _inputMap.Disable();
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        previousUp = transform.up;
-        currentState = stateGround;
+        PreviousUpDirection = transform.up;
+        _currentState = stateGround;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        currentState.UpdateState(this);
-
+        _currentState.UpdateState(this);
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Walkable")) bumped = true;
+        if (other.CompareTag("Walkable")) _bumped = true;
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Walkable")) bumped = false;
+        if (other.CompareTag("Walkable")) _bumped = false;
     }
+    public Vector3 PreviousUpDirection { get => previousUpDirection; set => previousUpDirection = value; }
     public void SwitchState(MovementBase state)
     {
-
-        currentState = state;
-        Debug.Log(currentState);
+        _currentState = state;
+        Debug.Log(_currentState);
     }
     public void Jump()
     {
-        currentVelocity = -6f;
-        currentState = stateAir;
-        currentState.UpdateState(this);
+        _currentFallVelocity = -6f;
+        _currentState = stateAir;
+        _currentState.UpdateState(this);
     }
     public Vector3 GetViewDirection(Vector3 floor)
     {
-        Vector3 viewDirection = cam.position - transform.position;
+        Vector3 viewDirection = _cam.position - transform.position;
         viewDirection = Vector3.Scale(viewDirection, new Vector3(-1, -1, -1));
         viewDirection = Vector3.ProjectOnPlane(viewDirection, floor);
         return viewDirection;
@@ -76,15 +73,15 @@ public class PlayerMovement : MonoBehaviour
         float dist = 0;
         int miss = 0;
         Vector3 HitDir = Vector3.zero;
-        for (int i = 0; i < GroundParent.childCount; i++)
+        for (int i = 0; i < _parentOfFloorRayOrigins.childCount; i++)
         {
-            Transform item = GroundParent.GetChild(i);
-            Physics.Raycast(item.position, -item.transform.up, out RaycastHit Hit, rayDistance, GroundLayers);
+            Transform item = _parentOfFloorRayOrigins.GetChild(i);
+            Physics.Raycast(item.position, -item.transform.up, out RaycastHit Hit, _rayDistance, _groundLayerRaycast);
             if (Hit.transform != null)
             {
                 HitDir += Hit.normal;
                 Debug.DrawLine(item.position, Hit.point);
-                DrawSurface(Hit);
+                DrawSurfaceHitted(Hit);
                 dist += Hit.distance;
             }
             else
@@ -95,14 +92,17 @@ public class PlayerMovement : MonoBehaviour
         }
         Debug.DrawLine(transform.position, transform.position + (HitDir.normalized * 2f), Color.cyan);
         floor = HitDir.normalized;
-        avgDistance = dist / GroundParent.childCount;
-        if (miss > Mathf.CeilToInt(2.0f / 3.0f * GroundParent.childCount))
+        avgDistance = dist / _parentOfFloorRayOrigins.childCount;
+        if (miss > Mathf.CeilToInt(2.0f / 3.0f * _parentOfFloorRayOrigins.childCount))
         {
             floor = Vector3.zero;
         }
         return ret;
     }
-    void DrawSurface(RaycastHit hit)
+    public bool CheckBumpedCondition => _bumped;
+    public Vector2 GetMovementControllInputVector => _inputMap.Player.Movement.ReadValue<Vector2>();
+    public bool GetJumpControllInputValue => _inputMap.Player.Jump.triggered;
+    void DrawSurfaceHitted(RaycastHit hit)
     {
         MeshCollider meshCollider = hit.collider as MeshCollider;
         if (meshCollider == null || meshCollider.sharedMesh == null)
