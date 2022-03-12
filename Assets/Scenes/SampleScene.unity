@@ -1023,7 +1023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 1
   anchor: {fileID: 613582722}
-  magnitude: 2.25
+  magnitude: 5
   GroundLayers:
     serializedVersion: 2
     m_Bits: 64
@@ -1466,7 +1466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 987b5cf2cb02d1f4a858a3dc42457ae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementSpeed: 5
+  _movementSpeed: 2
   _cam: {fileID: 388256848}
   _rayDistance: 2
   _floorDist: 0.4
@@ -1475,7 +1475,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _playerRigidBody: {fileID: 613582724}
-  _smoothtimeDivision: 0.3
+  _smoothTimeRotationDivision: 0.13
+  _smoothTimeMoveDivision: 0
   _velocity: {x: 0, y: 0, z: 0}
   _currentFallVelocity: 0
 --- !u!4 &613582722

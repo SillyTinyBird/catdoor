@@ -9,7 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public Transform _parentOfFloorRayOrigins;
     public LayerMask _groundLayerRaycast;
     public Rigidbody _playerRigidBody;
-    public float _smoothtimeDivision = 0.3F;
+    public float _smoothTimeRotationDivision = 0.3F;
+    public float _smoothTimeMoveDivision = 0.0F;
     [HideInInspector]
     public Vector3 _velocity = Vector3.zero;
     private Vector3 previousUpDirection;
@@ -38,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        ChangeSmoothCoefficient();
         _currentState.UpdateState(this);
     }
     private void OnTriggerEnter(Collider other)
@@ -54,10 +56,27 @@ public class PlayerMovement : MonoBehaviour
         _currentState = state;
         Debug.Log(_currentState);
     }
+    private void ChangeSmoothCoefficient()
+    {
+        if (_inputMap.Player.Movement.ReadValue<Vector2>()!=Vector2.zero)
+        {
+            if (_smoothTimeMoveDivision < 1.0f)
+            {
+                _smoothTimeMoveDivision += 0.05f;
+            }
+        }
+        else
+        {
+            if (_smoothTimeMoveDivision > 0.0f)
+            {
+                _smoothTimeMoveDivision -= 0.05f;
+            }
+        }
+    }
     public void Jump()
     {
         _currentFallVelocity = -6f;
-        _currentState = stateAir;
+        SwitchState(stateAir);
         _currentState.UpdateState(this);
     }
     public Vector3 GetViewDirection(Vector3 floor)
@@ -101,7 +120,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public bool CheckBumpedCondition => _bumped;
     public Vector2 GetMovementControllInputVector => _inputMap.Player.Movement.ReadValue<Vector2>();
-    public bool GetJumpControllInputValue => _inputMap.Player.Jump.triggered;
+    public float GetJumpControllInputValue => _inputMap.Player.Jump.ReadValue<float>();
     void DrawSurfaceHitted(RaycastHit hit)
     {
         MeshCollider meshCollider = hit.collider as MeshCollider;
